@@ -6,7 +6,7 @@ type Juguete = String
 type TiempoEnMinutos = Int
 type Energia = Int
 
-data Rutina = Rutina{
+data Actividad = Actividad{
     ejercicio :: (Perrito -> Perrito),
     tiempoEjercicio :: TiempoEnMinutos
 } deriving(Show)
@@ -16,6 +16,11 @@ data Perrito = Perrito{
     juguetes :: [Juguete],
     tiempo :: TiempoEnMinutos,
     energia :: Energia
+} deriving(Show)
+
+data Guarderia = Guarderia{
+    nombre :: String,
+    rutina :: [Actividad]
 } deriving(Show)
 
 modificarEnergia :: Int -> Perrito -> Perrito
@@ -45,14 +50,11 @@ diaDeSpa unPerrito
 diaDeCampo :: Perrito -> Perrito
 diaDeCampo unPerrito = jugar unPerrito{juguetes = (.) (drop 1) juguetes $ unPerrito}
 
-puedePermanecer :: [Rutina] -> Perrito -> Bool
-puedePermanecer unaListaDeRutinas unPerrito = ((.) sum (map tiempoEjercicio) $ unaListaDeRutinas ) <= (tiempo unPerrito)
+puedePermanecer :: Guarderia -> Perrito -> Bool
+puedePermanecer unaGuarderia unPerrito = ((.) sum (map tiempoEjercicio) $ rutina unaGuarderia ) <= (tiempo unPerrito)
 
-convertirListaDeEjerciciosEnUnoSolo :: [Rutina] -> (Perrito -> Perrito)
-convertirListaDeEjerciciosEnUnoSolo unaListaDeRutinas = foldl (flip (.)) id (map ejercicio unaListaDeRutinas)
-
-esResponsable :: [Rutina] -> Perrito -> Bool
-esResponsable unaListaDeRutinas unPerrito = length (juguetes((convertirListaDeEjerciciosEnUnoSolo unaListaDeRutinas) unPerrito)) >= 3
+esResponsable :: Guarderia -> Perrito -> Bool
+esResponsable unaGuarderia unPerrito = length (juguetes unPerrito) >= 3
 
 
 zara :: Perrito
@@ -63,5 +65,5 @@ zara = Perrito {
     energia = 80
 }
 
-guarderiaPdePerritos :: [Rutina]
-guarderiaPdePerritos = [Rutina{ejercicio = jugar, tiempoEjercicio = 30},Rutina{ejercicio = (ladrar 18), tiempoEjercicio = 20},Rutina{ejercicio = (regalar "pelota"), tiempoEjercicio = 0},Rutina{ejercicio = diaDeSpa, tiempoEjercicio = 120},Rutina{ejercicio = diaDeCampo, tiempoEjercicio = 720}]
+pdePerritos :: Guarderia
+pdePerritos = Guarderia{nombre = "PdePerritos", rutina = [Actividad{ejercicio = jugar, tiempoEjercicio = 30},Actividad{ejercicio = (ladrar 18), tiempoEjercicio = 20},Actividad{ejercicio = (regalar "pelota"), tiempoEjercicio = 0},Actividad{ejercicio = diaDeSpa, tiempoEjercicio = 120},Actividad{ejercicio = diaDeCampo, tiempoEjercicio = 720}]}
